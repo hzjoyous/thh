@@ -1,0 +1,23 @@
+#app, html, body {
+    height: 100%;
+    background-color: #E9EEF3;
+}
+
+.top {
+    height: 10%;
+}
+
+.top-other {
+    height: 90%;
+}
+
+.n-layout-header,
+.n-layout-footer {
+    padding: 24px;
+}
+
+.n-layout-sider {
+}
+
+.n-layout-content {
+}
