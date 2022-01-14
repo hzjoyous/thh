@@ -23,24 +23,24 @@ func (itself *userRepository) getModel() User {
 }
 
 func (itself *userRepository) DB() {
-	DB.SqlDBIns().Model(itself.getModel())
+	db.SqlDBIns().Model(itself.getModel())
 }
 
 func (itself *userRepository) Find() []User {
 	var users []User
-	DB.SqlDBIns().Find(&users)
+	db.SqlDBIns().Find(&users)
 	return users
 }
 
 func (itself *userRepository) GetById(id uint64) (User, error) {
 	var users User
-	result := DB.SqlDBIns().First(&users, id)
+	result := db.SqlDBIns().First(&users, id)
 	return users, result.Error
 }
 
 func (itself *userRepository) Verify(username string, password string) (User, error) {
 	var user User
-	err := DB.SqlDBIns().Where("name = ? ", username).Find(&user).Error
+	err := db.SqlDBIns().Where("name = ? ", username).Find(&user).Error
 	if err != nil {
 		return user, err
 	}

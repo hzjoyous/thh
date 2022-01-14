@@ -5,7 +5,18 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
+
+
+// Put 将数据存入文件
+func Put(data []byte, to string) error {
+	err := ioutil.WriteFile(to, data, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func FileGetContents(filename string) ([]byte, error) {
 	return ioutil.ReadFile(filename)
@@ -70,4 +81,9 @@ func UrlDecode(s string) string {
 
 func UrlEncode(s string) string {
 	return url.QueryEscape(s)
+}
+
+
+func FileNameWithoutExtension(fileName string) string {
+	return strings.TrimSuffix(fileName, filepath.Ext(fileName))
 }

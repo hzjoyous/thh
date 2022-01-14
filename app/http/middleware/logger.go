@@ -34,7 +34,7 @@ func LoggerMid() gin.HandlerFunc {
 		// 请求IP
 		clientIP := c.ClientIP()
 		//日志格式
-		Logger.Std().WithFields(logrus.Fields{
+		logger.Std().WithFields(logrus.Fields{
 			"http_status": statusCode,
 			"total_time":  latencyTime,
 			"ip":          clientIP,

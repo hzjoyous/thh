@@ -1,11 +1,11 @@
 package topic
 
 import (
-	"thh/app/models/base"
+	"thh/app/models"
 )
 
 type Topic struct {
-	base.BaseModel
+	models.BaseModel
 	State   int8   `gorm:"type:tinyint(3);not null;default:0;"  json:"state"`
 	Title   string `gorm:"type:varchar(255)"`
 	Content string

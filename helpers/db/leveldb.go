@@ -1,4 +1,4 @@
-package DB
+package db
 
 import (
 	"github.com/syndtr/goleveldb/leveldb"
@@ -47,9 +47,9 @@ func connectLeveldb() {
 	path := config.GetString("leveldb.path")
 	leveldbEntity, err := leveldb.OpenFile(path, nil)
 	if err != nil {
-		Logger.Std().Error(err)
+		logger.Std().Error(err)
 	} else {
-		Logger.Std().Info("leveldb 初始化成功")
+		logger.Std().Info("leveldb 初始化成功")
 		kvManager.leveldbConnect = leveldbEntity
 		kvManager.initSuccess = true
 	}

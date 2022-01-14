@@ -3,6 +3,7 @@ import sunMain from "./pages/sun/main.vue";
 import about from "./pages/sun/about.vue";
 import moon from "./pages/moon.vue";
 import listTodo from "./pages/moon/listTodo.vue";
+import tmp from "./pages/moon/tmp.vue";
 import moonabout1 from "./pages/moon/about1.vue";
 import moonabout2 from "./pages/moon/about2.vue";
 import moonabout3 from "./pages/moon/about3.vue";
@@ -14,6 +15,7 @@ import markdown from "./pages/moon/markdown.vue";
 export default [
     // {path: '/', component: about},
     {path: '/:catchAll(.*)*', name: 'index', redirect: '/sun/sunMain'},
+    // {path: '/:catchAll(.*)*', name: 'index', redirect: '/moon/tmp'},
     {
         path: '/sun', component: sun, children: [
             {name: '', path: '', component: sunMain},
@@ -33,6 +35,7 @@ export default [
             {name: 'moonabout6', path: 'moonabout6', component: moonabout6, belongMenu: true},
             {name: 'markdown', path: 'markdown', component: markdown, belongMenu: true},
             {name: 'listTodo', path: 'listTodo', component: listTodo, belongMenu: true},
+            {name: 'tmp', path: 'tmp', component: tmp, belongMenu: true},
         ]
     },
 ]

@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"math/rand"
-	"thh/app/models/base"
+	"thh/app/models"
 	"thh/helpers/db"
 )
 
@@ -14,7 +14,7 @@ func init() {
 
 // User 用户模型
 type User struct {
-	base.BaseModel
+	models.BaseModel
 
 	Username string `gorm:"type:varchar(255);not null;default:'';"  json:"username"`
 	Email    string `gorm:"type:varchar(255);index:idx_email,unique;default:'';"  json:"email"`
@@ -50,7 +50,7 @@ func (entity *User) SetPassword(password string) *User {
 }
 
 func (entity *User) Create() (err error) {
-	if err = DB.SqlDBIns().Create(&entity).Error; err != nil {
+	if err = db.SqlDBIns().Create(&entity).Error; err != nil {
 		return err
 	}
 	return nil

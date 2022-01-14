@@ -1,11 +1,15 @@
-package DB
+package db
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
 	"gorm.io/driver/sqlite"
 	"log"
 	"path/filepath"
 	"thh/helpers"
 	"thh/helpers/config"
+	"thh/helpers/logger"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,7 +20,8 @@ import (
 )
 
 // DB gorm.DB 对象
-var sqlDBIns *gorm.DB
+var dbIns *gorm.DB
+var SQLDB *sql.DB
 
 //  dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 // NewMysql
@@ -30,13 +35,13 @@ func connectDB() *gorm.DB {
 	var err error
 	switch config.GetString("database.default") {
 	case "sqlite":
-		sqlDBIns, err = connectSqlLiteDB()
+		dbIns, err = connectSqlLiteDB( logger.NewGormLogger())
 		break
 	case "mysql":
-		sqlDBIns, err = connectMysqlDB()
+		dbIns, err = connectMysqlDB( logger.NewGormLogger())
 		break
 	default:
-		sqlDBIns, err = connectSqlLiteDB()
+		dbIns, err = connectSqlLiteDB( logger.NewGormLogger())
 		break
 	}
 
@@ -44,22 +49,23 @@ func connectDB() *gorm.DB {
 		log.Println(err)
 	}
 
-	sqlDB, _ := sqlDBIns.DB()
+	SQLDB, _ = dbIns.DB()
+	// 获取底层的 sqlDB
 
 	// 设置最大连接数
-	sqlDB.SetMaxOpenConns(config.GetInt("database.mysql.max_open_connections"))
+	SQLDB.SetMaxOpenConns(config.GetInt("database.mysql.max_open_connections"))
 	// 设置最大空闲连接数
-	sqlDB.SetMaxIdleConns(config.GetInt("database.mysql.max_idle_connections"))
+	SQLDB.SetMaxIdleConns(config.GetInt("database.mysql.max_idle_connections"))
 	// 设置每个链接的过期时间
-	sqlDB.SetConnMaxLifetime(time.Duration(config.GetInt("database.mysql.max_life_seconds")) * time.Second)
-	return sqlDBIns
+	SQLDB.SetConnMaxLifetime(time.Duration(config.GetInt("database.mysql.max_life_seconds")) * time.Second)
+	return dbIns
 }
 
 func SqlDBIns() *gorm.DB {
-	return sqlDBIns
+	return dbIns
 }
 
-func connectMysqlDB() (*gorm.DB, error) {
+func connectMysqlDB(_logger gormlogger.Interface) (*gorm.DB, error) {
 	// 初始化 MySQL 连接信息
 	var (
 		dbUrl = config.GetString("database.mysql.url")
@@ -70,26 +76,16 @@ func connectMysqlDB() (*gorm.DB, error) {
 		DSN: dbUrl,
 	})
 
-	var level gormlogger.LogLevel
-
-	if debug {
-		// 读取不到数据也会显示
-		level = gormlogger.Info
-	} else {
-		// 只有错误才会显示
-		level = gormlogger.Error
-	}
-
 	// 准备数据库连接池
 	db, err := gorm.Open(gormConfig, &gorm.Config{
-		Logger: gormlogger.Default.LogMode(level),
+		Logger:_logger,
 	})
 	if debug && err == nil {
 		db = db.Debug()
 	}
 	return db, err
 }
-func connectSqlLiteDB() (*gorm.DB, error) {
+func connectSqlLiteDB(_logger gormlogger.Interface) (*gorm.DB, error) {
 	dbPath := config.GetString("database.sqlite.path")
 	dbDir := filepath.Dir(dbPath)
 
@@ -102,7 +98,7 @@ func connectSqlLiteDB() (*gorm.DB, error) {
 		}
 	}
 	// ":memory:"
-	return gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	return gorm.Open(sqlite.Open(dbPath), &gorm.Config{Logger: _logger})
 }
 
 // BaseModel 模型基类
@@ -119,4 +115,59 @@ type BaseModel struct {
 // GetStringID 获取 ID 的字符串格式
 func (a BaseModel) GetStringID() string {
 	return helpers.ToString(a.ID)
+}
+
+func TableName(obj interface{}) string {
+	stmt := &gorm.Statement{DB: dbIns}
+	stmt.Parse(obj)
+	return stmt.Schema.Table
+}
+
+
+func CurrentDatabase() (dbname string) {
+	dbname = SqlDBIns().Migrator().CurrentDatabase()
+	return
+}
+
+
+func DeleteAllTables() error {
+
+	var err error
+
+	switch config.Get("database.connection") {
+	case "mysql":
+		err = deleteMysqlDatabase()
+	case "sqlite":
+		deleteAllSqliteTables()
+	default:
+		panic(errors.New("database connection not supported"))
+	}
+
+	return err
+}
+
+func deleteAllSqliteTables() error {
+	tables := []string{}
+	SqlDBIns().Select(&tables, "SELECT name FROM sqlite_master WHERE type='table'")
+	for _, table := range tables {
+		SqlDBIns().Migrator().DropTable(table)
+	}
+	return nil
+}
+
+func deleteMysqlDatabase() error {
+	dbname := CurrentDatabase()
+	sql := fmt.Sprintf("DROP DATABASE %s;", dbname)
+	if err := SqlDBIns().Exec(sql).Error; err != nil {
+		return err
+	}
+	sql = fmt.Sprintf("CREATE DATABASE %s;", dbname)
+	if err := SqlDBIns().Exec(sql).Error; err != nil {
+		return err
+	}
+	sql = fmt.Sprintf("USE %s;", dbname)
+	if err := SqlDBIns().Exec(sql).Error; err != nil {
+		return err
+	}
+	return nil
 }

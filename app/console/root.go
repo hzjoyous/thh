@@ -4,11 +4,19 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
-
-	"github.com/spf13/viper"
+	"runtime"
+	"thh/helpers"
 )
 
-var cfgFile string
+// RegisterDefaultCmd 注册默认命令
+func RegisterDefaultCmd(rootCmd *cobra.Command, subCmd *cobra.Command) {
+	cmd, _, err := rootCmd.Find(os.Args[1:])
+	firstArg := helpers.FirstElement(os.Args[1:])
+	if err == nil && cmd.Use == rootCmd.Use && firstArg != "-h" && firstArg != "--help" {
+		args := append([]string{subCmd.Use}, os.Args[1:]...)
+		rootCmd.SetArgs(args)
+	}
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -20,6 +28,12 @@ examples and usage of using your application. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	PersistentPreRun: func(command *cobra.Command, args []string) {
+		var m runtime.MemStats
+		runtime.ReadMemStats(&m)
+		fmt.Println("Thousand-hand:start")
+		fmt.Printf("Thousand-hand:useMem %d KB\n", m.Alloc/1024/8)
+	},
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -28,43 +42,7 @@ to quickly create a Cobra application.`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	RegisterDefaultCmd(rootCmd, CmdServe)
 	cobra.CheckErr(rootCmd.Execute())
 }
 
-func init() {
-	//cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	//rootCmd.PersistentFlags().StringVar(&cfgFile, "conf", "", "conf file (default is $HOME/.scaffold.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-// initConfig reads in conf file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use conf file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search conf in home directory with name ".scaffold" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".scaffold")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a conf file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using conf file:", viper.ConfigFileUsed())
-	}
-}

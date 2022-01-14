@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"thh/helpers/db"
-	Logger "thh/helpers/logger"
+	"thh/helpers/logger"
 	"time"
 )
 
@@ -81,17 +81,17 @@ func SetData(c *gin.Context) {
 	key := c.DefaultQuery("key", "key")
 	data := c.DefaultQuery("dataRep", "dataRep")
 
-	DB.KVDB().Set(key, data)
+	db.KVDB().Set(key, data)
 
 	c.JSON(http.StatusOK, gin.H{
-		"key":  key,
+		"key":     key,
 		"dataRep": data,
 	})
 }
 
 func GetData(c *gin.Context) {
 	key := c.DefaultQuery("key", "key")
-	entry := DB.KVDB().Get(key)
+	entry := db.KVDB().Get(key)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": string(entry),
@@ -166,10 +166,10 @@ func Mkdir(basePath string) string {
 }
 
 func LoggerTest(c *gin.Context) {
-	Logger.Info("日志日志日志日志日志日志日志日志日志日志")
-	Logger.Info("日志日志日志日志日志日志日志日志日志日志")
-	Logger.Info("日志日志日志日志日志日志日志日志日志日志")
-	Logger.Info("日志日志日志日志日志日志日志日志日志日志")
-	Logger.Info("日志日志日志日志日志日志日志日志日志日志")
+	logger.Info("日志日志日志日志日志日志日志日志日志日志")
+	logger.Info("日志日志日志日志日志日志日志日志日志日志")
+	logger.Info("日志日志日志日志日志日志日志日志日志日志")
+	logger.Info("日志日志日志日志日志日志日志日志日志日志")
+	logger.Info("日志日志日志日志日志日志日志日志日志日志")
 	c.JSON(200, "ok")
 }

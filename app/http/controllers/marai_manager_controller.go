@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"thh/app/service/remote_service"
 	"thh/helpers"
-	Logger "thh/helpers/logger"
+	logger "thh/helpers/logger"
 )
 
 type request4MaraiManager struct {
@@ -40,7 +40,7 @@ type request4MaraiManager struct {
 func MaraiManager(c *gin.Context) {
 	rawData, _ := c.GetRawData()
 	fmt.Println(string(rawData))
-	Logger.Std().Info(string(rawData))
+	logger.Std().Info(string(rawData))
 	// 重新写回，否则回出现EOF情况
 	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(rawData))
 

@@ -1,0 +1,28 @@
+//Package {{PackageName}} 模型
+package {{PackageName}}
+
+import (
+	"thh/app/models"
+	"thh/helpers/db"
+)
+
+type {{StructName}} struct {
+	models.BaseModel
+
+	// Put fields in here
+	// FIXME()
+}
+
+func ({{VariableName}} *{{StructName}}) Create() {
+	db.SqlDBIns().Create(&{{VariableName}})
+}
+
+func ({{VariableName}} *{{StructName}}) Save() (rowsAffected int64) {
+	result := db.SqlDBIns().Save(&{{VariableName}})
+	return result.RowsAffected
+}
+
+func ({{VariableName}} *{{StructName}}) Delete() (rowsAffected int64) {
+	result := db.SqlDBIns().Delete(&{{VariableName}})
+	return result.RowsAffected
+}

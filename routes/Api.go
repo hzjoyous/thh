@@ -5,8 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"thh/app/http/controllers"
+	"thh/app/http/controllers/api/v1"
 	"thh/app/http/middleware"
-	Logger "thh/helpers/logger"
+	"thh/helpers/logger"
 )
 
 func registerApiRoutes(r *gin.Engine) {
@@ -25,10 +26,11 @@ func registerApiRoutes(r *gin.Engine) {
 		Any("log", func(context *gin.Context) {
 			max := 10
 			for i := 0; i < max; i++ {
-				Logger.Std().Info("log test")
+				logger.Std().Info("log test")
 			}
 			context.String(200, "okokokooko")
-		})
+		}).
+		Any("/about/about", v1.About)
 
 	r.Group("api").Use(middleware.JWTAuth()).
 		Any("/userInfo", upHandleAuth(controllers.UserInfoV2))

@@ -46,9 +46,9 @@ func BuildResponse(code int, data interface{}) Response {
 func SuccessResponse(data interface{}) Response {
 	return BuildResponse(http.StatusOK,
 		map[string]interface{}{
-			"msg":  nil,
+			"msg":     nil,
 			"dataRep": data,
-			"code": SUCCESS,
+			"code":    SUCCESS,
 		},
 	)
 }
@@ -56,9 +56,9 @@ func SuccessResponse(data interface{}) Response {
 func FailResponse(msg string) Response {
 	return BuildResponse(http.StatusOK,
 		map[string]interface{}{
-			"msg":  msg,
+			"msg":     msg,
 			"dataRep": nil,
-			"code": FAIL,
+			"code":    FAIL,
 		},
 	)
 }

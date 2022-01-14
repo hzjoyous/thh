@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"sync"
 	"thh/helpers"
-	Logger "thh/helpers/logger"
+	"thh/helpers/logger"
 )
 
 var upGrader = websocket.Upgrader{
@@ -34,7 +34,7 @@ func WsHandle(c *gin.Context) {
 
 	if !clients[client] {
 		join <- client
-		Logger.Info("user:", client.name, "websocket connect success!")
+		logger.Info("user:", client.name, "websocket connect success!")
 	}
 
 	defer func(ws *websocket.Conn) {
@@ -98,26 +98,26 @@ func Broadcaster() {
 		// 消息通道中有消息则执行，否则堵塞
 		case msg := <-message:
 			str := fmt.Sprintf("broadcaster-----------%s send message: %s\n", msg.Name, msg.Message)
-			Logger.Info(str)
+			logger.Info(str)
 			// 将某个用户发出的消息发送给所有用户
 			for client := range clients {
 				// 将数据编码成json形式，data是[]byte类型
 				// json.Marshal()只会编码结构体中公开的属性(即大写字母开头的属性)
 				data, err := json.Marshal(msg)
 				if err != nil {
-					Logger.Info("Fail to marshal message:", err)
+					logger.Info("Fail to marshal message:", err)
 					return
 				}
 				// fmt.Println("=======the json message is", string(dataRep))  // 转换成字符串类型便于查看
 				if client.conn.WriteMessage(websocket.TextMessage, data) != nil {
-					Logger.Info("Fail to write message")
+					logger.Info("Fail to write message")
 				}
 			}
 
 		// 有用户加入
 		case client := <-join:
 			str := fmt.Sprintf("broadcaster-----------%s join in the chat room\n", client.name)
-			Logger.Info(str)
+			logger.Info(str)
 
 			clients[client] = true // 将用户加入映射
 
@@ -134,11 +134,11 @@ func Broadcaster() {
 		// 有用户退出
 		case client := <-leave:
 			str := fmt.Sprintf("broadcaster-----------%s leave the chat room\n", client.name)
-			Logger.Info(str)
+			logger.Info(str)
 
 			// 如果该用户已经被删除
 			if !clients[client] {
-				Logger.Info("the client had leaved, client's name:" + client.name)
+				logger.Info("the client had leaved, client's name:" + client.name)
 				break
 			}
 

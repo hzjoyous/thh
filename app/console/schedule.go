@@ -10,15 +10,16 @@ import (
 var c = cron.New()
 
 func RunJob() {
+	//mirai.MiraiClientManager()
 
-	//mirai_manager.MiraiClientManager()
-
-	_, err := c.AddFunc("* * * * *", heart)
+	_, err := c.AddFunc("* * * * *", func() {
+		fmt.Println("HEART_IN_RUN_JOB :", time.Now())
+	})
 	if err != nil {
 		fmt.Println(err)
 	}
 	//c.Run()
-	Logger.Info("The task is set successfully")
+	logger.Info("The task is set successfully")
 
 }
 
@@ -44,7 +45,3 @@ func RunJob() {
 //	defer needStopL.Unlock()
 //	return needStop
 //}
-
-func heart() {
-	fmt.Println("HEART_IN_RUN_JOB :", time.Now())
-}

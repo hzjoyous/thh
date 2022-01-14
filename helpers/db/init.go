@@ -1,4 +1,4 @@
-package DB
+package db
 
 func InitConnection() {
 	connectDB()

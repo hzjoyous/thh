@@ -36,7 +36,7 @@ func init() {
 				"max_open_connections": config.Env("DB_MAX_OPEN_CONNECTIONS", 20),
 
 				// 最大生存时间
-				"max_life_seconds":     config.Env("DB_MAX_LIFE_SECONDS", 300),
+				"max_life_seconds": config.Env("DB_MAX_LIFE_SECONDS", 300),
 			},
 		}
 	})
