@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/spf13/cast"
+	"github.com/tidwall/gjson"
 	"runtime"
 	"strconv"
 	"sync"
 	"thh/app/models/dataRep"
-	"thh/helpers"
-	"thh/helpers/config"
+	"thh/arms/config"
 )
 
 var miraiHttpClientStd = &MiraiHttpClient{}
@@ -76,7 +77,7 @@ type BaseMsg struct {
 }
 
 // SendPBody 发送 Post Body
-func (itself *MiraiHttpClient) SendPBody(url string, body map[string]interface{}) *resty.Response {
+func (itself *MiraiHttpClient) SendPBody(url string, body map[string]any) *resty.Response {
 	body["sessionKey"] = itself.getSessionKey()
 	resp, _ := itself.httpClient.R().SetBody(body).Post(url)
 	return resp
@@ -113,7 +114,7 @@ func (itself *MiraiHttpClient) VerifySession() error {
 	}
 	data, _ := json.Marshal(authR)
 
-	dataRep.GetDataRepository().Set("session", helpers.ToString(data))
+	dataRep.Set("session", cast.ToString(data))
 
 	itself.SetSessionKey(authR.Session)
 
@@ -181,17 +182,17 @@ type releaseResponse struct {
 
 // SendFriendMessage 发送消息给friend
 func (itself *MiraiHttpClient) SendFriendMessage(qq string, message string) (resp *resty.Response, err error) {
-	return itself.SendPBody("/sendFriendMessage", map[string]interface{}{
+	return itself.SendPBody("/sendFriendMessage", map[string]any{
 		"target": qq,
-		"messageChain": []map[string]interface{}{
+		"messageChain": []map[string]any{
 			GetTextMessage(message),
 		},
 	}), nil
 }
 
 // SendFriendMessageList 发送消息给friend
-func (itself *MiraiHttpClient) SendFriendMessageList(qq string, messageChainList ...map[string]interface{}) (resp *resty.Response, err error) {
-	return itself.SendPBody("/sendFriendMessage", map[string]interface{}{
+func (itself *MiraiHttpClient) SendFriendMessageList(qq string, messageChainList ...map[string]any) (resp *resty.Response, err error) {
+	return itself.SendPBody("/sendFriendMessage", map[string]any{
 		"target":       qq,
 		"messageChain": messageChainList,
 	}), nil
@@ -205,10 +206,10 @@ type SendFriendMessageResponse struct {
 
 // SendTempMessage @Unverified 发送临时分组信息
 func (itself *MiraiHttpClient) SendTempMessage(qq int, group int, messageType string, text string) (resp *resty.Response, err error) {
-	return itself.SendPBody("/sendTempMessage", map[string]interface{}{
+	return itself.SendPBody("/sendTempMessage", map[string]any{
 		"qq":    qq,
 		"group": group,
-		"messageChain": map[string]interface{}{
+		"messageChain": map[string]any{
 			"type": messageType,
 			"text": text,
 		},
@@ -222,9 +223,9 @@ func (itself *MiraiHttpClient) GroupList() (resp *resty.Response, err error) {
 
 // SendGroupMessage 发送小小给群组
 func (itself *MiraiHttpClient) SendGroupMessage(GroupId string, message string) (resp *resty.Response, err error) {
-	return itself.SendPBody("/sendGroupMessage", map[string]interface{}{
+	return itself.SendPBody("/sendGroupMessage", map[string]any{
 		"target": GroupId,
-		"messageChain": []map[string]interface{}{
+		"messageChain": []map[string]any{
 			{"type": "Plain", "text": message},
 			//{"type": "Plain", "text": message},
 			//{"type": "Face", "faceId": message},
@@ -237,8 +238,8 @@ func (itself *MiraiHttpClient) SendGroupMessage(GroupId string, message string) 
 		//}{{Type: "Plain", Text: message}},
 	}), nil
 }
-func (itself *MiraiHttpClient) SendGroupMessageChain(GroupId string, msg ...map[string]interface{}) (resp *resty.Response, err error) {
-	return itself.SendPBody("/sendGroupMessage", map[string]interface{}{
+func (itself *MiraiHttpClient) SendGroupMessageChain(GroupId string, msg ...map[string]any) (resp *resty.Response, err error) {
+	return itself.SendPBody("/sendGroupMessage", map[string]any{
 		"target":       GroupId,
 		"messageChain": msg,
 		//"messageChain": []struct {
@@ -271,10 +272,13 @@ func (itself qqFriendEntity) getQQNumber() string {
 }
 
 // AirFriendList 群发消息
-func (itself *MiraiHttpClient) AirFriendList(messageChainList ...map[string]interface{}) {
+func (itself *MiraiHttpClient) AirFriendList(messageChainList ...map[string]any) {
 	result, _ := itself.FriendList()
+
 	var qqFriendList []qqFriendEntity
-	_ = json.Unmarshal([]byte(result.String()), &qqFriendList)
+	data := gjson.Get(result.String(), "data")
+	_ = json.Unmarshal([]byte(data.String()), &qqFriendList)
+	fmt.Println(qqFriendList)
 	for _, qqEntity := range qqFriendList {
 		fmt.Println(qqEntity.ID, qqEntity.Remark)
 		fmt.Println(qqEntity.getQQNumber())
@@ -284,23 +288,23 @@ func (itself *MiraiHttpClient) AirFriendList(messageChainList ...map[string]inte
 }
 
 // GetTextMessage 文本信息
-func GetTextMessage(message string) map[string]interface{} {
-	return map[string]interface{}{"type": "Plain", "text": message}
+func GetTextMessage(message string) map[string]any {
+	return map[string]any{"type": "Plain", "text": message}
 }
 
 // GetFaceMessage  1~289
-func GetFaceMessage(message string) map[string]interface{} {
-	return map[string]interface{}{"type": "Face", "faceId": message}
+func GetFaceMessage(message string) map[string]any {
+	return map[string]any{"type": "Face", "faceId": message}
 }
 
 // GetImageMessage 图片信息
-func GetImageMessage(message string) map[string]interface{} {
-	return map[string]interface{}{"type": "Image", "faceId": message}
+func GetImageMessage(message string) map[string]any {
+	return map[string]any{"type": "Image", "faceId": message}
 }
 
 // at 某人
-func GetAtMessage(qq string) map[string]interface{} {
-	return map[string]interface{}{
+func GetAtMessage(qq string) map[string]any {
+	return map[string]any{
 		"type":   "At",
 		"target": qq,
 		//"display": "@Mirai",

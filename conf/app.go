@@ -1,6 +1,6 @@
 package conf
 
-import "thh/helpers/config"
+import "thh/arms/config"
 
 const (
 	ENV      = "env"
@@ -13,8 +13,8 @@ const (
 )
 
 func init() {
-	config.Add("app", func() map[string]interface{} {
-		return map[string]interface{}{
+	config.Add("app", func() map[string]any {
+		return map[string]any{
 			// 应用名称，暂时没有使用到
 			"name": config.Env("APP_NAME", "THH"),
 

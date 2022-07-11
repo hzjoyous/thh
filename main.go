@@ -1,11 +1,20 @@
 package main
 
 import (
+	"embed"
 	_ "net/http/pprof"
 	"thh/app/console"
-	"thh/bootstrap"
+	"thh/arms/app"
 )
 
+//go:embed web/*
+var webFS embed.FS
+
+//go:embed actor/dist/*
+var actorFS embed.FS
+
+//go:embed .env.example
+var envExample string
 
 /*
 top		 main
@@ -16,7 +25,10 @@ up       conf base
 base     package helpers
 */
 func main() {
-	bootstrap.Initialize()
-	console.Execute()
+	// 注册静态资源
+	app.WebRepSave(webFS)
+	app.ActorSave(actorFS)
+	app.EnvExample(envExample)
 
+	console.Execute()
 }

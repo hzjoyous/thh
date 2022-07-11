@@ -5,3 +5,4 @@ thh/
 .env.base
 /storage/
 thh
+*.exe

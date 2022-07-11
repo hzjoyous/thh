@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"thh/app/models/user"
+	"thh/app/models/Users"
 )
 
 const (
@@ -17,15 +17,15 @@ type Request struct {
 	TraceId  string
 	UserId   uint64
 	userSet  bool
-	userInfo user.User
+	userInfo Users.User
 	Context  *gin.Context
 }
 
-func (r *Request) GetUser() (user.User, error) {
+func (r *Request) GetUser() (Users.User, error) {
 	if r.userSet != false {
 		return r.userInfo, nil
 	}
-	user, err := user.UserRepository().GetById(r.UserId)
+	user, err := Users.GetById(r.UserId)
 	if err != nil {
 		return r.userInfo, err
 	}
@@ -36,16 +36,16 @@ func (r *Request) GetUser() (user.User, error) {
 
 type Response struct {
 	Code int
-	Data interface{}
+	Data any
 }
 
-func BuildResponse(code int, data interface{}) Response {
+func BuildResponse(code int, data any) Response {
 	return Response{code, data}
 }
 
-func SuccessResponse(data interface{}) Response {
+func SuccessResponse(data any) Response {
 	return BuildResponse(http.StatusOK,
-		map[string]interface{}{
+		map[string]any{
 			"msg":     nil,
 			"dataRep": data,
 			"code":    SUCCESS,
@@ -55,7 +55,7 @@ func SuccessResponse(data interface{}) Response {
 
 func FailResponse(msg string) Response {
 	return BuildResponse(http.StatusOK,
-		map[string]interface{}{
+		map[string]any{
 			"msg":     msg,
 			"dataRep": nil,
 			"code":    FAIL,

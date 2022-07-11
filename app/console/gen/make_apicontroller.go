@@ -3,10 +3,11 @@ package gen
 import (
 	"fmt"
 	"strings"
-	"thh/helpers/console"
+	"thh/arms/output"
 
 	"github.com/spf13/cobra"
 )
+
 // @todo
 var CmdMakeAPIController = &cobra.Command{
 	Use:   "apicontroller",
@@ -20,7 +21,7 @@ func runMakeAPIController(cmd *cobra.Command, args []string) {
 	// 处理参数，要求附带 API 版本（v1 或者 v2）
 	array := strings.Split(args[0], "/")
 	if len(array) != 2 {
-		console.Exit("api controller name format: v1/user")
+		output.Exit("api controller name format: v1/user")
 	}
 
 	// apiVersion 用来拼接目标路径

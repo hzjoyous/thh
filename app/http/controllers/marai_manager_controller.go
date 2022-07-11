@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 	"io/ioutil"
 	"net/http"
 	"thh/app/service/remote_service"
-	"thh/helpers"
-	logger "thh/helpers/logger"
+	logger "thh/arms/logger"
 )
 
 type request4MaraiManager struct {
@@ -61,7 +61,7 @@ func MaraiManager(c *gin.Context) {
 		if len(requestMessage) == 0 {
 			requestMessage = "hi"
 		}
-		r, _ := client.SendFriendMessage(helpers.ToString(requestData.Sender.ID), requestMessage)
+		r, _ := client.SendFriendMessage(cast.ToString(requestData.Sender.ID), requestMessage)
 		fmt.Println(r.String())
 		r, _ = client.SendGroupMessageChain("1146399464",
 			remote_service.GetAtMessage("2817736127"),

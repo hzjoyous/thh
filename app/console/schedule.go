@@ -3,7 +3,7 @@ package console
 import (
 	"fmt"
 	"github.com/robfig/cron/v3"
-	"thh/helpers/logger"
+	"thh/arms/logger"
 	"time"
 )
 
@@ -18,7 +18,7 @@ func RunJob() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	//c.Run()
+
 	logger.Info("The task is set successfully")
 
 }

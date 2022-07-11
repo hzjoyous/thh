@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/spf13/cast"
 	"net/http"
 	"sync"
-	"thh/helpers"
-	"thh/helpers/logger"
+	"thh/arms/logger"
 )
 
 var upGrader = websocket.Upgrader{
@@ -168,5 +168,5 @@ func (itself *IdMakerInOnP) get() uint64 {
 	return itself.id
 }
 func (itself *IdMakerInOnP) getString() string {
-	return helpers.ToString(itself.get())
+	return cast.ToString(itself.get())
 }

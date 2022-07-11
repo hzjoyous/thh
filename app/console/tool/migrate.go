@@ -2,11 +2,11 @@ package tool
 
 import (
 	"github.com/spf13/cobra"
+	"thh/arms/migrate"
 	"thh/database/migrations"
-	"thh/helpers/migrate"
 )
 
-func init(){
+func init() {
 	appendCommand(CmdMigrate)
 }
 
@@ -84,4 +84,3 @@ var CmdMigrateFresh = &cobra.Command{
 func runFresh(cmd *cobra.Command, args []string) {
 	migrator().Fresh()
 }
-

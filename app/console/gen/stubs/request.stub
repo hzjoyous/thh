@@ -11,7 +11,7 @@ type {{StructName}}Request struct {
 	// FIXME()
 }
 
-func {{StructName}}Save(data interface{}, c *gin.Context) map[string][]string {
+func {{StructName}}Save(data any, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
 		// "name":        []string{"required", "min_cn:2", "max_cn:8", "not_exists:{{TableName}},name"},

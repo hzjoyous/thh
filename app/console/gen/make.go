@@ -4,10 +4,12 @@ package gen
 import (
 	"embed"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
-	"thh/helpers"
-	"thh/helpers/console"
-	"thh/helpers/str"
+	"thh/arms"
+	"thh/arms/output"
+	"thh/arms/str"
 
 	"github.com/iancoleman/strcase"
 	"github.com/spf13/cobra"
@@ -71,8 +73,6 @@ func init() {
 		CmdMakeAPIController,
 		CmdMakeRequest,
 		CmdMakeMigration,
-		CmdMakeFactory,
-		CmdMakeSeeder,
 	)
 }
 
@@ -90,7 +90,7 @@ func makeModelFromString(name string) Model {
 
 // createFileFromStub 读取 stub 文件并进行变量替换
 // 最后一个选项可选，如若传参，应传 map[string]string 类型，作为附加的变量搜索替换
-func createFileFromStub(filePath string, stubName string, model Model, variables ...interface{}) {
+func createFileFromStub(filePath string, stubName string, model Model, variables ...any) {
 
 	// 实现最后一个参数可选
 	replaces := make(map[string]string)
@@ -99,8 +99,15 @@ func createFileFromStub(filePath string, stubName string, model Model, variables
 	}
 
 	// 目标文件已存在
-	if helpers.IsExist(filePath) {
-		console.Exit(filePath + " already exists!")
+	if arms.IsExist(filePath) {
+		output.Exit(filePath + " already exists!")
+	}
+
+	dirPath := filepath.Dir(filePath)
+	if !arms.IsExist(filePath) {
+		if err := os.MkdirAll(dirPath, 0777); err != nil {
+
+		}
 	}
 
 	// 读取 stub 模板文件
@@ -121,11 +128,11 @@ func createFileFromStub(filePath string, stubName string, model Model, variables
 	}
 
 	// 存储到目标文件中
-	err := helpers.Put([]byte(modelStub), filePath)
+	err := arms.Put([]byte(modelStub), filePath)
 	if err != nil {
-		console.Exit(err.Error())
+		output.Exit(err.Error())
 	}
 
 	// 提示成功
-	console.Success(fmt.Sprintf("[%s] created.", filePath))
+	output.Success(fmt.Sprintf("[%s] created.", filePath))
 }

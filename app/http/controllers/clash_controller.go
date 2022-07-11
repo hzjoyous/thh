@@ -6,8 +6,7 @@ import (
 	"strings"
 )
 
-func GetClashConfig(c *gin.Context) {
-	config := `port: 7890
+const config = `port: 7890
 socks-port: 7891
 redir-port: 7892
 allow-lan: false
@@ -19,19 +18,14 @@ proxies:
 proxy-groups:
     - {name: global, type: relay, proxies: [Charles]}
 `
+
+func GetClashConfig(c *gin.Context) {
 	host := c.Request.URL.Query().Get("host")
 	if len(host) == 0 {
 		c.String(500, "无法使用")
 		return
 	}
-
-	configRep := strings.Replace(config, "#{host}", host, 1)
-
-	//c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
-	//c.Header("Pragma", "no-cache")
-	//c.Header("Expires", "0")
-	//c.Header("Content-Disposition", "attachment; filename=Charles-conf.yaml")
-	//c.Data(http.StatusOK, "text/yaml; charset=utf-8", []byte(configRep))
+	configRep := strings.ReplaceAll(config, "#{host}", host)
 	c.String(http.StatusOK, configRep)
 
 }

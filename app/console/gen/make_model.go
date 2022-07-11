@@ -26,7 +26,7 @@ func runMakeModel(cmd *cobra.Command, args []string) {
 
 	// 替换变量
 	createFileFromStub(dir+model.PackageName+"_model.go", "model/model", model)
-	createFileFromStub(dir+model.PackageName+"_util.go", "model/model_util", model)
+	createFileFromStub(dir+model.PackageName+"_rep.go", "model/model_rep", model)
 	createFileFromStub(dir+model.PackageName+"_hooks.go", "model/model_hooks", model)
 
 }

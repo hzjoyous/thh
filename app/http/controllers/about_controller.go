@@ -10,8 +10,8 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
-	"thh/helpers/db"
-	"thh/helpers/logger"
+	"thh/app/models/dataRep"
+	"thh/arms/logger"
 	"time"
 )
 
@@ -81,7 +81,7 @@ func SetData(c *gin.Context) {
 	key := c.DefaultQuery("key", "key")
 	data := c.DefaultQuery("dataRep", "dataRep")
 
-	db.KVDB().Set(key, data)
+	dataRep.Set(key, data)
 
 	c.JSON(http.StatusOK, gin.H{
 		"key":     key,
@@ -91,7 +91,7 @@ func SetData(c *gin.Context) {
 
 func GetData(c *gin.Context) {
 	key := c.DefaultQuery("key", "key")
-	entry := db.KVDB().Get(key)
+	entry := dataRep.Get(key)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": string(entry),
@@ -114,19 +114,23 @@ func Upload(ctx *gin.Context) {
 		//文件大小
 		fmt.Println(file.Size)
 		//获取文件的后缀名
-		extstring := path.Ext(file.Filename)
-		fmt.Println(extstring)
+		fileExt := path.Ext(file.Filename)
+		fmt.Println(fileExt)
 		//根据当前时间鹾生成一个新的文件名
 		fileNameInt := time.Now().Unix()
 		fileNameStr := strconv.FormatInt(fileNameInt, 10)
 		//新的文件名
-		fileName := fileNameStr + extstring
+		fileName := fileNameStr + fileExt
 		//保存上传文件
 		filePath := filepath.Join(Mkdir("upload"), "/", fileName)
-		ctx.SaveUploadedFile(file, filePath)
+		err := ctx.SaveUploadedFile(file, filePath)
+		message := "SUCCESS"
+		if err != nil {
+			message = err.Error()
+		}
 		ctx.JSON(http.StatusOK, gin.H{
 			"code":    0,
-			"message": "success",
+			"message": message,
 		})
 	}
 }

@@ -4,6 +4,8 @@
                      style="height: 32px; padding: 8px;"
                      bordered
     >
+      <router-link to="/sun/index">index</router-link>
+      |
       <router-link to="/sun/sunMain">main</router-link>
       |
       <router-link to="/sun/about">about</router-link>

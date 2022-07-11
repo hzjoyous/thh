@@ -1,6 +1,6 @@
 package conf
 
-import "thh/helpers/config"
+import "thh/arms/config"
 
 const on = "on"
 const off = "off"
@@ -11,18 +11,18 @@ func UseMigration() bool {
 }
 
 func init() {
-	config.Add("database", func() map[string]interface{} {
+	config.Add("database", func() map[string]any {
 
-		return map[string]interface{}{
+		return map[string]any{
 			// 默认使用的链接方式
 			"default": config.Env("DB_CONNECTION", "sqlite"),
 
-			"sqlite": map[string]interface{}{
+			"sqlite": map[string]any{
 				// sqlite 路径
-				"path": config.Env("DB_PATH", "./storage/sqlite.DB"),
+				"path": config.Env("DB_PATH", ":memory:"),
 			},
 
-			"mysql": map[string]interface{}{
+			"mysql": map[string]any{
 				// 是否使用数据迁移
 				"openMigration": config.Env("OPEN_MIGRATION", "off"),
 

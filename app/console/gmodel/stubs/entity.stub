@@ -1,0 +1,24 @@
+package #{ModelName}
+
+#{Import}
+
+#{Field}
+
+type #{ModelName} struct {
+#{EmList}
+}
+
+// func (itself *#{ModelName}) BeforeSave(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) BeforeCreate(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) AfterCreate(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) BeforeUpdate(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) AfterUpdate(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) AfterSave(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) BeforeDelete(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) AfterDelete(tx *gorm.DB) (err error) {}
+// func (itself *#{ModelName}) AfterFind(tx *gorm.DB) (err error) {}
+
+
+func (#{ModelName}) TableName() string {
+	return tableName
+}

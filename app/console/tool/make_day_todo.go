@@ -2,8 +2,8 @@ package tool
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	"thh/helpers"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func makeDayTodo(cmd *cobra.Command, args []string) {
 		time.Saturday:  "Saturday",  //"星期六",
 	}
 	for i := sumDay; i > -16; i-- {
-		timeEntity := time.Unix(now+helpers.ToInt64(i*83600), 0)
+		timeEntity := time.Unix(now+cast.ToInt64(i*83600), 0)
 
 		fmt.Println("# ", timeEntity.Format(formatStr), " ", chineseWeekDay[timeEntity.Weekday()])
 	}

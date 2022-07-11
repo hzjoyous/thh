@@ -13,16 +13,16 @@ type {{StructName}} struct {
 	// FIXME()
 }
 
-func ({{VariableName}} *{{StructName}}) Create() {
-	db.SqlDBIns().Create(&{{VariableName}})
+func (itself *{{StructName}}) Create() {
+	db.Std().Create(&itself)
 }
 
-func ({{VariableName}} *{{StructName}}) Save() (rowsAffected int64) {
-	result := db.SqlDBIns().Save(&{{VariableName}})
+func (itself *{{StructName}}) Save() (rowsAffected int64) {
+	result := db.Std().Save(&itself)
 	return result.RowsAffected
 }
 
-func ({{VariableName}} *{{StructName}}) Delete() (rowsAffected int64) {
-	result := db.SqlDBIns().Delete(&{{VariableName}})
+func (itself *{{StructName}}) Delete() (rowsAffected int64) {
+	result := db.Std().Delete(&itself)
 	return result.RowsAffected
 }

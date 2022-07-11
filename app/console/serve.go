@@ -9,9 +9,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
+	"thh/arms/config"
+	"thh/arms/logger"
 	"thh/conf"
-	"thh/helpers/config"
-	"thh/helpers/logger"
 	"thh/routes"
 	"time"
 )
@@ -25,8 +26,24 @@ var CmdServe = &cobra.Command{
 }
 
 func runWeb(cmd *cobra.Command, args []string) {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	fmt.Println("Thousand-hand:start")
+	fmt.Printf("Thousand-hand:useMem %d KB\n", m.Alloc/1024/8)
 
 	go RunJob()
+
+	// 初始化应用程序
+	if config.GetBool("app.debug", true) {
+		go func() {
+			// go tool pprof http://localhost:6060/debug/pprof/profile
+			//http://127.0.0.1:7070/debug/pprof/
+			err := http.ListenAndServe("0.0.0.0:7070", nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}()
+	}
 
 	port := config.GetString("app.port")
 	var engine *gin.Engine

@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	appendCommand(&cobra.Command{Use: "practiceArrAndMap", Short: "", Run: one})
+	appendCommand(&cobra.Command{Use: "p:ArrAndMap", Short: "", Run: one})
 }
 
 func one(cmd *cobra.Command, args []string) {

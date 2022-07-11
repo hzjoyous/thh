@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"thh/helpers/logger"
+	"thh/arms/logger"
 	"time"
 )
 
-func LoggerMid() gin.HandlerFunc {
+func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 开始时间
 		startTime := time.Now()

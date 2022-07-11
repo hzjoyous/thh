@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"thh/helpers"
 	"time"
 )
 
@@ -13,13 +12,4 @@ type BaseModel struct {
 	UpdatedAt time.Time `gorm:"column:updated_at;index"`
 	// 支持 gorm 软删除
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;index"`
-}
-
-// GetStringID 获取 ID 的字符串格式
-func (itself BaseModel) GetStringID() string {
-	return helpers.ToString(itself.ID)
-}
-
-type Repository interface {
-	getModel()
 }

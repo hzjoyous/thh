@@ -11,14 +11,20 @@ import moonabout4 from "./pages/moon/about4.vue";
 import moonabout5 from "./pages/moon/about5.vue";
 import moonabout6 from "./pages/moon/about6.vue";
 import markdown from "./pages/moon/markdown.vue";
+import tree from "./pages/moon/tree.vue";
+import index from "./pages/sun/index.vue"
 
 export default [
     // {path: '/', component: about},
-    {path: '/:catchAll(.*)*', name: 'index', redirect: '/sun/sunMain'},
-    // {path: '/:catchAll(.*)*', name: 'index', redirect: '/moon/tmp'},
+    // {path: '/:catchAll(.*)*', name: 'index', redirect: '/sun/index'},
+    {
+        // path: '/:catchAll(.*)*', name: '', redirect: '/moon/tmp',
+        path: '/:catchAll(.*)*', name: '', redirect: '/sun/index'
+    },
     {
         path: '/sun', component: sun, children: [
             {name: '', path: '', component: sunMain},
+            {name: 'index', path: 'index', component: index},
             {name: 'sunMain', path: 'sunMain', component: sunMain},
             {name: 'about', path: 'about', component: about},
         ]
@@ -36,6 +42,7 @@ export default [
             {name: 'markdown', path: 'markdown', component: markdown, belongMenu: true},
             {name: 'listTodo', path: 'listTodo', component: listTodo, belongMenu: true},
             {name: 'tmp', path: 'tmp', component: tmp, belongMenu: true},
+            {name: 'tree', path: 'tree', component: tree, belongMenu: true},
         ]
     },
 ]

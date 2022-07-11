@@ -2,7 +2,7 @@ package gen
 
 import (
 	"fmt"
-	"thh/helpers/console"
+	"thh/arms/output"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +26,7 @@ func runMakeCMD(cmd *cobra.Command, args []string) {
 	createFileFromStub(filePath, "cmd", model)
 
 	// 友好提示
-	console.Success("command name:" + model.PackageName)
-	console.Success("command variable name: cmd.Cmd" + model.StructName)
-	console.Warning("please edit main.go's app.Commands slice to register command")
+	output.Success("command name:" + model.PackageName)
+	output.Success("command variable name: cmd.Cmd" + model.StructName)
+	//console.Warning("please edit main.go's app.Commands slice to register command")
 }

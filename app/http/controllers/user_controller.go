@@ -1,12 +1,18 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/utils"
+	"github.com/spf13/cast"
 	"net/http"
 	"runtime"
-	"thh/app/models/user"
-	"thh/helpers/jwt"
+	"thh/app/models/Users"
+	"thh/arms/jwt"
+	"time"
+)
+
+const (
+	expireTime = time.Second * 86400 * 7
 )
 
 // Register
@@ -16,6 +22,11 @@ import (
 // 验证后更新验证字段
 // 清除验证码
 func Register(c *gin.Context) {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 	type request struct {
 		Email    string `json:"email" binging:"required"`
 		Username string `json:"userName"  binding:"required"`
@@ -28,7 +39,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	userEntity := user.MakeUser(r.Username, r.Password, r.Email)
+	userEntity := Users.MakeUser(r.Username, r.Password, r.Email)
 	err := userEntity.Create()
 
 	if err != nil {
@@ -38,7 +49,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.CreateNewToken(userEntity.ID, userEntity.Username)
+	token, err := jwt.CreateNewToken(userEntity.ID, expireTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "创建失败",
@@ -62,7 +73,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	userEntity, err := user.UserRepository().Verify(r.Username, r.Password)
+	userEntity, err := Users.Verify(r.Username, r.Password)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "登录失败",
@@ -70,7 +81,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.CreateNewToken(userEntity.ID, userEntity.Username)
+	token, err := jwt.CreateNewToken(userEntity.ID, expireTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "创建失败",
@@ -94,23 +105,23 @@ func GetUserInfo(request Request) Response {
 		return FailResponse(err.Error())
 	}
 
-	user, err := user.UserRepository().GetById(requestData.UserId)
+	userEntity, err := Users.GetById(requestData.UserId)
 	if err != nil {
 		return FailResponse(err.Error())
 	}
-	return SuccessResponse(user)
+	return SuccessResponse(userEntity)
 }
 
 func UserInfoV2(request Request) Response {
-	user, err := request.GetUser()
+	userEntity, err := request.GetUser()
 	if err != nil {
 		return FailResponse("账号异常" + err.Error())
 	}
-	return SuccessResponse(user)
+	return SuccessResponse(userEntity)
 }
 
 func GetUseMem(Request) Response {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	return SuccessResponse(utils.ToString(m.Alloc/1024/8) + "kb")
+	return SuccessResponse(cast.ToString(m.Alloc/1024/8) + "kb")
 }

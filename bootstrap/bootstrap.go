@@ -4,52 +4,44 @@ import (
 	"fmt"
 	"gorm.io/gorm"
 	"log"
-	"net/http"
+	"thh/app/models/ActivityConfig"
+	"thh/app/models/ActivityLimitConfig"
+	"thh/app/models/Permission"
+	"thh/app/models/Role"
+	"thh/app/models/RolePermission"
+	"thh/app/models/Users"
 	"thh/app/models/dataRep"
-	"thh/app/models/guest"
-	"thh/app/models/user"
+	"thh/arms"
+	"thh/arms/app"
+	"thh/arms/config"
+	"thh/arms/logger"
 	"thh/conf"
-	"thh/helpers/config"
-	"thh/helpers/db"
-	"thh/helpers/logger"
+	dbconnect2 "thh/conf/dbconnect"
 )
 
-type Application struct {
-}
-
-var App Application
-
-func Initialize() Application {
+func Initialize() {
 
 	// 预加载项目配置加载配置文件
 	conf.Initialize()
-
+	if !arms.IsExist("./.env") {
+		err := arms.Put([]byte(app.GetEnvExample()), "./.env")
+		if err != nil {
+			panic(err)
+		}
+	}
 	// 读取项目配置
 	config.InitConfig("")
 
 	// 日志
 	logger.Init(conf.LogPath())
 
-	// 数据库链接迁移
-	db.InitConnection()
+	// 数据库链接
+	dbconnect2.InitConnection()
 
 	// 数据库迁移
-	migration(conf.UseMigration(), db.SqlDBIns())
+	migration(conf.UseMigration(), dbconnect2.Std())
 
-	// 初始化应用程序
-	App = Application{}
-
-	if config.GetBool("app.debug", true) {
-		go func() {
-			//http://127.0.0.1:6060/debug/pprof/
-			err := http.ListenAndServe("0.0.0.0:6060", nil)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}()
-	}
-
-	return App
+	arms.SetBasePath("storage/")
 }
 
 func migration(migration bool, db *gorm.DB) {
@@ -60,10 +52,17 @@ func migration(migration bool, db *gorm.DB) {
 	var err error
 
 	if err = db.AutoMigrate(
-		&user.User{},
 		&dataRep.DataRep{},
-		&guest.Guest{},
+		&Users.Users{},
+		&Users.User{},
+		&Role.Role{},
+		&RolePermission.RolePermission{},
+		&Permission.Permission{},
+		&ActivityConfig.ActivityConfig{},
+		&ActivityLimitConfig.ActivityLimitConfig{},
 	); err != nil {
 		log.Println(err)
+	} else {
+		fmt.Println("migration end")
 	}
 }

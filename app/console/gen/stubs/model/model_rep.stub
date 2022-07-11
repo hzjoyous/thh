@@ -1,0 +1,41 @@
+package {{PackageName}}
+
+import (
+	"thh/helpers/app"
+	"thh/helpers/db"
+	"thh/helpers/paginator"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetById(idstr string) ({{VariableName}} {{StructName}}) {
+	db.Std().Where("id", idstr).First(&{{VariableName}})
+	return
+}
+
+func GetBy(field, value string) ({{VariableName}} {{StructName}}) {
+	db.Std().Where("? = ?", field, value).First(&{{VariableName}})
+	return
+}
+
+func All() ({{VariableNamePlural}} []{{StructName}}) {
+	db.Std().Find(&{{VariableNamePlural}})
+	return 
+}
+
+func IsExist(field, value string) bool {
+	var count int64
+	db.Std().Model({{StructName}}{}).Where(" = ?", field, value).Count(&count)
+	return count > 0
+}
+
+func Paginate(c *gin.Context, perPage int) ({{VariableNamePlural}} []{{StructName}}, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		db.Std().Model({{StructName}}{}),
+		&{{VariableNamePlural}},
+		app.V1URL(db.TableName(&{{StructName}}{})),
+		perPage,
+	)
+	return
+}

@@ -1,0 +1,27 @@
+package #{ModelName}
+
+func Get(id any) (entity #{ModelName}) {
+	builder().Where(pid, id).First(&entity)
+	return
+}
+
+func Update(entity #{ModelName}){
+	builder().Save(&entity)
+}
+
+func UpdateAll(entities []#{ModelName}){
+	builder().Save(&entities)
+}
+
+func Delete(entity #{ModelName}){
+	builder().Delete(&entity)
+}
+
+func Save(entity #{ModelName}) {
+	builder().Save(&entity)
+}
+
+func Create(entity *#{ModelName}) {
+	builder().Create(&entity)
+
+}
