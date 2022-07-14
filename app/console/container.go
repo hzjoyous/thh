@@ -7,11 +7,11 @@ import (
 	"thh/app/console/cmd/demo"
 	"thh/app/console/cmd/mirai"
 	"thh/app/console/cmd/origin"
-	"thh/app/console/cmd/shadow"
 	"thh/app/console/cmd/tspider"
 	"thh/app/console/gen"
 	"thh/app/console/gmodel"
 	"thh/app/console/one"
+	"thh/app/console/shadow"
 	"thh/app/console/tool"
 )
 
