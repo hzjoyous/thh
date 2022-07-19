@@ -9,14 +9,12 @@ import (
 )
 
 func init() {
-	appendCommand(CmdStdin)
-}
-
-var CmdStdin = &cobra.Command{
-	Use:   "stdin",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runStdin,
-	Args:  cobra.ExactArgs(0), // 只允许且必须传 0 个参数
+	appendCommand(&cobra.Command{
+		Use:   "stdin",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runStdin,
+		Args:  cobra.ExactArgs(0), // 只允许且必须传 0 个参数
+	})
 }
 
 func runStdin(cmd *cobra.Command, args []string) {

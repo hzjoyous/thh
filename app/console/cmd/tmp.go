@@ -11,14 +11,12 @@ import (
 )
 
 func init() {
-	appendCommand(CmdTmp)
-}
-
-var CmdTmp = &cobra.Command{
-	Use:   "tmp",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runTmp,
-	//Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	appendCommand(&cobra.Command{
+		Use:   "tmp",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runTmp,
+		//Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	})
 }
 
 type SortTestStruct struct {

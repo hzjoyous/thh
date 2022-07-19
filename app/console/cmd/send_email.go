@@ -8,13 +8,11 @@ import (
 )
 
 func init() {
-	appendCommand(SendEmail)
-}
-
-var SendEmail = &cobra.Command{
-	Use:   "send_email",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runSendEmail,
+	appendCommand(&cobra.Command{
+		Use:   "send_email",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runSendEmail,
+	})
 }
 
 func runSendEmail(cmd *cobra.Command, args []string) {

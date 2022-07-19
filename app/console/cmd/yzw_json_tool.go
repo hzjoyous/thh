@@ -9,14 +9,12 @@ import (
 )
 
 func init() {
-	appendCommand(CmdYzwJsonTool)
-}
-
-var CmdYzwJsonTool = &cobra.Command{
-	Use:   "yzw_json_tool",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runYzwJsonTool,
-	// Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	appendCommand(&cobra.Command{
+		Use:   "yzw_json_tool",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runYzwJsonTool,
+		// Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	})
 }
 
 type vSort []v

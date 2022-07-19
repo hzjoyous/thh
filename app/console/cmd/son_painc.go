@@ -8,14 +8,12 @@ import (
 )
 
 func init() {
-	appendCommand(CmdSonPainc)
-}
-
-var CmdSonPainc = &cobra.Command{
-	Use:   "son_painc",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runSonPainc,
-	// Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	appendCommand(&cobra.Command{
+		Use:   "son_painc",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runSonPainc,
+		// Args:  cobra.ExactArgs(1), // 只允许且必须传 1 个参数
+	})
 }
 
 func runSonPainc(cmd *cobra.Command, args []string) {

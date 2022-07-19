@@ -8,13 +8,11 @@ import (
 )
 
 func init() {
-	appendCommand(CmdXpathDemo)
-}
-
-var CmdXpathDemo = &cobra.Command{
-	Use:   "xpath_demo",
-	Short: "HERE PUTS THE COMMAND DESCRIPTION",
-	Run:   runXpathDemo,
+	appendCommand(&cobra.Command{
+		Use:   "xpath_demo",
+		Short: "HERE PUTS THE COMMAND DESCRIPTION",
+		Run:   runXpathDemo,
+	})
 }
 
 func xpathDemo() {
