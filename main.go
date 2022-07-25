@@ -26,6 +26,7 @@ base     package helpers
 */
 func main() {
 	// 注册静态资源
+	app.InitStart()
 	app.WebRepSave(webFS)
 	app.ActorSave(actorFS)
 	app.EnvExample(envExample)
