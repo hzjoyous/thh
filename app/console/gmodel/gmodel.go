@@ -52,6 +52,7 @@ func runGmodel(cmd *cobra.Command, args []string) {
 	dbStd := `"dt/util/db"`
 	dbStd = `"thh/helpers/db"`
 	dbStd = `"thh/conf/dbconnect"`
+	fmt.Println(dataSourceName)
 	db, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{PrepareStmt: false,
 		NamingStrategy: schema.NamingStrategy{SingularTable: true}, // 全局禁用表名复数
 		Logger:         logger.Default})
